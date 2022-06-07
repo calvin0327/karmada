@@ -6,7 +6,7 @@
 ## "host" means install karmada in the control-cluster
 ## "agent" means install agent client in the member cluster
 ## "component" means install selected components in the control-cluster
-installMode: "host"
+installMode: "agent"
 
 ## @param clusterDomain default domain for karmada
 clusterDomain: "cluster.local"

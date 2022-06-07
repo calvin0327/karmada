@@ -44,7 +44,7 @@ stringData:
           certificate-authority-data: {{ b64enc .Values.agent.kubeconfig.caCrt }}
           insecure-skip-tls-verify: false
           server: {{ .Values.agent.kubeconfig.server }}
-        name: {{ $name }}-apiserver
+        name: {{ $name }}-apiserver-test
     users:
       - user:
           client-certificate-data: {{ b64enc .Values.agent.kubeconfig.crt }}
