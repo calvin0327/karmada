@@ -7,6 +7,9 @@ metadata:
   namespace: {{ include "karmada.namespace" . }}
   labels:
   {{- include "karmada.cm.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "2"
 spec:
   replicas: {{  .Values.controllerManager.replicaCount }}
   selector:
@@ -53,7 +56,9 @@ spec:
             - --cluster-status-update-frequency=10s
             - --secure-port=10357
             - --leader-elect-resource-namespace={{ include "karmada.namespace" . }}
-            - --v=2
+            ## TODO:
+            - --failover-eviction-timeout=30s
+            - --v=4
             {{- with (include "karmada.controllerManager.featureGates" .) }}
             - {{ . }}
             {{- end }}

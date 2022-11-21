@@ -22,11 +22,11 @@ clusterDomain: "cluster.local"
 
 ## @param components component list
 components: []
-  # components: [
-  #   "schedulerEstimator"
-  #   "descheduler"
-  #   "search"
-  # ]
+# components: [
+#   "schedulerEstimator"
+#   "descheduler"
+#   "search"
+# ]
 
 cfssl:
   ## @param image.registry karmada cfssl image registry
@@ -34,13 +34,13 @@ cfssl:
   ## @param image.tag karmada cfssl image tag (immutable tags are recommended)
   ##
   image:
-    registry: docker.io
-    repository: cfssl/cfssl
-    tag: latest
+    registry: ghcr.m.daocloud.io
+    repository: daocloud/cfssl
+    tag: v1.6.3
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
 
 kubectl:
   ## @param image.registry karmada kubectl image registry
@@ -48,13 +48,13 @@ kubectl:
   ## @param image.tag karmada kubectl image tag (immutable tags are recommended)
   ##
   image:
-    registry: docker.io
-    repository: bitnami/kubectl
-    tag: latest
+    registry: ghcr.m.daocloud.io
+    repository: daocloud/kubectl
+    tag: v1.25.3
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
 
 ## pre-install job config
 preInstallJob:
@@ -75,14 +75,15 @@ certs:
     ## @param certs.auto.expiry expiry of the certificate
     expiry: 43800h
     ## @param certs.auto.hosts hosts of the certificate
-    hosts: [
-      "kubernetes.default.svc",
-      "*.etcd.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}",
-      "*.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}",
-      "*.{{ .Release.Namespace }}.svc",
-      "localhost",
-      "127.0.0.1"
-    ]
+    hosts:
+      [
+        "kubernetes.default.svc",
+        "*.etcd.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}",
+        "*.{{ .Release.Namespace }}.svc.{{ .Values.clusterDomain }}",
+        "*.{{ .Release.Namespace }}.svc",
+        "localhost",
+        "127.0.0.1",
+      ]
   custom:
     ## @param certs.custom.caCrt ca of the certificate
     caCrt: |
@@ -138,13 +139,13 @@ scheduler:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-scheduler
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -153,7 +154,8 @@ scheduler:
     ##
     pullSecrets: []
   ## @param scheduler.resources resource quota of the scheduler
-  resources: {}
+  resources:
+    {}
     # If you do want to specify resources, uncomment the following
     # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
     # limits:
@@ -168,8 +170,8 @@ scheduler:
   affinity: {}
   ## @param scheduler.tolerations tolerations of the scheduler
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param scheduler.strategy strategy of the scheduler
   strategy:
     type: RollingUpdate
@@ -195,13 +197,13 @@ webhook:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-webhook
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -211,22 +213,22 @@ webhook:
     pullSecrets: []
   ## @param webhook.resources resource quota of the webhook
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param webhook.nodeSelector node selector of the webhook
   nodeSelector: {}
   ## @param webhook.affinity affinity of the webhook
   affinity: {}
   ## @param webhook.tolerations tolerations of the webhook
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param webhook.strategy strategy of the webhook
   strategy:
     type: RollingUpdate
@@ -252,13 +254,13 @@ controllerManager:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-controller-manager
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -268,22 +270,22 @@ controllerManager:
     pullSecrets: []
   ## @param controllerManager.resources resource quota of the karmada-controller-manager
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param controllerManager.nodeSelector node selector of the karmada-controller-manager
   nodeSelector: {}
   ## @param controllerManager.affinity affinity of the karmada-controller-manager
   affinity: {}
   ## @param controllerManager.tolerations tolerations of the karmada-controller-manager
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param controllerManager.strategy strategy of the controller manager
   strategy:
     type: RollingUpdate
@@ -293,7 +295,11 @@ controllerManager:
   ## @param featureGate to controllerManager
   featureGates:
     ## @param PropagateDeps is a feature gate for the controllerManager to allow propagate dependent respurce to workloads.
-    PropagateDeps: false
+    PropagateDeps: true
+    ## TODO:
+    Failover: false
+    GracefulEviction: true
+    CustomizedClusterResourceModeling: true
 
 ## karmada apiserver config
 apiServer:
@@ -313,7 +319,7 @@ apiServer:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: k8s.gcr.io
+    registry: k8s-gcr.m.daocloud.io
     repository: kube-apiserver
     tag: "v1.25.2"
     ## Specify a imagePullPolicy
@@ -329,14 +335,14 @@ apiServer:
     pullSecrets: []
   ## @param apiServer.resources resource quota of the karmada-apiserver
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param apiServer.hostNetwork
   ## "true" means using hostNetwork
   ## "false" means normal network
@@ -356,8 +362,8 @@ apiServer:
           topologyKey: kubernetes.io/hostname
   ## @param apiServer.tolerations tolerations of the karmada-apiserver
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param apiServer.serviceType default service type for apiserver
   ## "LoadBalancer" means using LoadBalancer
   ## "ClusterIP" means using ClusterIP
@@ -394,13 +400,13 @@ aggregatedApiServer:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-aggregated-apiserver
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -412,22 +418,22 @@ aggregatedApiServer:
   resources:
     requests:
       cpu: 100m
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+      # If you do want to specify resources, uncomment the following
+      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+      # limits:
+      #   cpu: 100m
+      #   memory: 128Mi
+      # requests:
+      #   cpu: 100m
+      #   memory: 128Mi
   ## @param aggregatedApiServer.nodeSelector node selector of the karmada-aggregated-apiserver
   nodeSelector: {}
   ## @param aggregatedApiServer.affinity affinity of the karmada-aggregated-apiserver
   affinity: {}
   ## @param aggregatedApiServer.tolerations tolerations of the karmada-aggregated-apiserver
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param aggregatedApiServer.strategy strategy of the karmada-aggregated-apiserver
   strategy:
     type: RollingUpdate
@@ -453,7 +459,7 @@ kubeControllerManager:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: k8s.gcr.io
+    registry: k8s-gcr.m.daocloud.io
     repository: kube-controller-manager
     tag: "v1.25.2"
     ## Specify a imagePullPolicy
@@ -469,22 +475,22 @@ kubeControllerManager:
     pullSecrets: []
   ## @param kubeControllerManager.resources resource quota of the kube-controller-manager
   resources:
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param kubeControllerManager.nodeSelector node selector of the kube-controller-manager
   nodeSelector: {}
   ## @param kubeControllerManager.affinity affinity of the kube-controller-manager
   affinity: {}
   ## @param kubeControllerManager.tolerations tolerations of the kube-controller-manager
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param kubeControllerManager.strategy strategy of the kube controller manager
   strategy:
     type: RollingUpdate
@@ -529,7 +535,7 @@ etcd:
     ## @param image.pullPolicy etcd image pull policy
     ##
     image:
-      registry: k8s.gcr.io
+      registry: k8s-gcr.m.daocloud.io
       repository: etcd
       tag: "3.5.3-0"
       ## Specify a imagePullPolicy
@@ -549,14 +555,14 @@ etcd:
     nodeSelector: {}
     ## @param etcd.internal.resources
     resources: {}
-      # If you do want to specify resources, uncomment the following
-      # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-      # limits:
-      #   cpu: 100m
-      #   memory: 128Mi
-      # requests:
-      #   cpu: 100m
-      #   memory: 128Mi
+    # If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
 
 ## agent client config
 agent:
@@ -599,13 +605,13 @@ agent:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-agent
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -615,22 +621,22 @@ agent:
     pullSecrets: []
   ## @param agent.resources
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param agent.nodeSelector node selector of the agent
   nodeSelector: {}
   ## @param agent.affinity affinity of the agent
   affinity: {}
   ## @param agent.tolerations tolerations of the agent
   tolerations: {}
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param agent.strategy strategy of the agent
   strategy:
     type: RollingUpdate
@@ -677,13 +683,13 @@ schedulerEstimator:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-scheduler-estimator
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -693,22 +699,22 @@ schedulerEstimator:
     pullSecrets: []
   ## @param schedulerEstimator.resources resource quota of the scheduler-estimator
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param schedulerEstimator.nodeSelector node selector of the scheduler-estimator
   nodeSelector: {}
   ## @param schedulerEstimator.affinity affinity of the scheduler-estimator
   affinity: {}
   ## @param schedulerEstimator.tolerations tolerations of the scheduler-estimator
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param schedulerEstimator.strategy strategy of the scheduler-estimator
   strategy:
     type: RollingUpdate
@@ -734,13 +740,13 @@ descheduler:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-descheduler
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -750,22 +756,22 @@ descheduler:
     pullSecrets: []
   ## @param descheduler.resources resource quota of the descheduler
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
-    #   memory: 128Mi
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
   ## @param descheduler.nodeSelector node selector of the descheduler
   nodeSelector: {}
   ## @param descheduler.affinity affinity of the descheduler
   affinity: {}
   ## @param descheduler.tolerations tolerations of the descheduler
   tolerations: []
-    # - key: node-role.kubernetes.io/master
-    #   operator: Exists
+  # - key: node-role.kubernetes.io/master
+  #   operator: Exists
   ## @param descheduler.strategy strategy of the descheduler
   strategy:
     type: RollingUpdate
@@ -791,13 +797,13 @@ search:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: swr.ap-southeast-1.myhuaweicloud.com
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-search
-    tag: latest
+    tag: v1.4.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -807,13 +813,13 @@ search:
     pullSecrets: []
   ## @param search.resources resource quota of the search
   resources: {}
-    # If you do want to specify resources, uncomment the following
-    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-    # limits:
-    #   cpu: 100m
-    #   memory: 128Mi
-    # requests:
-    #   cpu: 100m
+  # If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
   #   memory: 128Mi
   ## @param search.nodeSelector node selector of the search
   nodeSelector: {}
@@ -821,7 +827,7 @@ search:
   affinity: {}
   ## @param search.tolerations tolerations of the search
   tolerations: []
-    # - key: node-role.kubernetes.io/master
+  # - key: node-role.kubernetes.io/master
   #   operator: Exists
   ## @param search.strategy strategy of the search
   strategy:

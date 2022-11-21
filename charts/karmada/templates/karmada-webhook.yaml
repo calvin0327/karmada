@@ -58,11 +58,12 @@ spec:
             - name: {{ $name }}-webhook-cert-secret
               mountPath: /var/serving-cert
               readOnly: true
-          readinessProbe:
-            httpGet:
-              path: /readyz
-              port: 8443
-              scheme: HTTPS
+          # TODO:
+          # readinessProbe:
+          #   httpGet:
+          #     path: /readyz
+          #     port: 8443
+          #     scheme: HTTPS
       volumes:
       {{- include "karmada.kubeconfig.volume" . | nindent 8 }}
         - name: {{ $name }}-webhook-cert-secret

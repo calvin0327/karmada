@@ -27,6 +27,7 @@ spec:
     metadata:
       labels:
         app: etcd
+        etcd-instance-name: etcd-{{ include "karmada.namespace" . }}
     spec:
       automountServiceAccountToken: false
       {{- include "karmada.internal.etcd.imagePullSecrets" . | nindent 6 }}
@@ -35,10 +36,10 @@ spec:
           requiredDuringSchedulingIgnoredDuringExecution:
             - labelSelector:
                 matchExpressions:
-                  - key: app
+                  - key: etcd-instance-name
                     operator: In
                     values:
-                      - etcd
+                      - etcd-{{ include "karmada.namespace" . }}
               topologyKey: kubernetes.io/hostname
       {{- with .Values.etcd.internal.nodeSelector }}
       nodeSelector:
