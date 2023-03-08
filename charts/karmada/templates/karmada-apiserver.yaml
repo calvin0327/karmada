@@ -63,6 +63,7 @@ spec:
             - --service-account-key-file=/etc/kubernetes/pki/karmada.key
             - --service-account-signing-key-file=/etc/kubernetes/pki/karmada.key
             - --service-cluster-ip-range=10.96.0.0/12
+            - --service-node-port-range=30000-39999
             - --proxy-client-cert-file=/etc/kubernetes/pki/front-proxy-client.crt
             - --proxy-client-key-file=/etc/kubernetes/pki/front-proxy-client.key
             - --requestheader-allowed-names=front-proxy-client

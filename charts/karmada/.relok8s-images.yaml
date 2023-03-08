@@ -1,0 +1,22 @@
+# cfssl
+- "{{ .cfssl.image.registry }}/{{ .cfssl.image.repository }}:{{ .cfssl.image.tag }}"
+# kubectl
+- "{{ .kubectl.image.registry }}/{{ .kubectl.image.repository }}:{{ .kubectl.image.tag }}"
+# scheduler
+- "{{ .scheduler.image.registry }}/{{ .scheduler.image.repository }}:{{ .scheduler.image.tag }}"
+# webhook
+- "{{ .webhook.image.registry }}/{{ .webhook.image.repository }}:{{ .webhook.image.tag }}"
+# controllerManager
+- "{{ .controllerManager.image.registry }}/{{ .controllerManager.image.repository }}:{{ .controllerManager.image.tag }}"
+# apiServer
+- "{{ .apiServer.image.registry }}/{{ .apiServer.image.repository }}:{{ .apiServer.image.tag }}"
+# aggregatedApiServer
+- "{{ .aggregatedApiServer.image.registry }}/{{ .aggregatedApiServer.image.repository }}:{{ .aggregatedApiServer.image.tag }}"
+# kubeControllerManager
+- "{{ .kubeControllerManager.image.registry }}/{{ .kubeControllerManager.image.repository }}:{{ .kubeControllerManager.image.tag }}"
+# etcd
+- "{{ .etcd.internal.image.registry }}/{{ .etcd.internal.image.repository }}:{{ .etcd.internal.image.tag }}"
+# schedulerEstimator
+- "{{ .schedulerEstimator.image.registry }}/{{ .schedulerEstimator.image.repository }}:{{ .schedulerEstimator.image.tag }}"
+# descheduler
+- "{{ .descheduler.image.registry }}/{{ .descheduler.image.repository }}:{{ .descheduler.image.tag }}"

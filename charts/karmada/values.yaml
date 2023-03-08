@@ -36,13 +36,13 @@ cfssl:
   ## @param image.tag karmada cfssl image tag (immutable tags are recommended)
   ##
   image:
-    registry: docker.io
-    repository: cfssl/cfssl
-    tag: latest
+    registry: ghcr.m.daocloud.io
+    repository: daocloud/cfssl
+    tag: v1.6.3
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
 
 kubectl:
   ## @param image.registry karmada kubectl image registry
@@ -50,13 +50,13 @@ kubectl:
   ## @param image.tag karmada kubectl image tag (immutable tags are recommended)
   ##
   image:
-    registry: docker.io
-    repository: bitnami/kubectl
-    tag: latest
+    registry: ghcr.m.daocloud.io
+    repository: daocloud/kubectl
+    tag: v1.25.3
     ## Specify a imagePullPolicy
-    ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
+    ## Defaults to 'IfNotPresent' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
 
 ## pre-install job config
 preInstallJob:
@@ -140,13 +140,13 @@ scheduler:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-scheduler
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -197,13 +197,13 @@ webhook:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-webhook
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -254,13 +254,13 @@ controllerManager:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-controller-manager
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -294,8 +294,7 @@ controllerManager:
       maxSurge: 50%
   ## @param featureGate to controllerManager
   featureGates:
-    ## @param PropagateDeps is a feature gate for the controllerManager to allow propagate dependent respurce to workloads.
-    PropagateDeps: false
+    Failover: false
 
 ## karmada apiserver config
 apiServer:
@@ -315,7 +314,7 @@ apiServer:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: registry.k8s.io
+    registry: k8s.m.daocloud.io
     repository: kube-apiserver
     tag: "v1.25.2"
     ## Specify a imagePullPolicy
@@ -396,13 +395,13 @@ aggregatedApiServer:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-aggregated-apiserver
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -455,7 +454,7 @@ kubeControllerManager:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: registry.k8s.io
+    registry: k8s.m.daocloud.io
     repository: kube-controller-manager
     tag: "v1.25.2"
     ## Specify a imagePullPolicy
@@ -547,7 +546,7 @@ etcd:
     ## @param image.pullPolicy etcd image pull policy
     ##
     image:
-      registry: registry.k8s.io
+      registry: k8s.m.daocloud.io
       repository: etcd
       tag: "3.5.3-0"
       ## Specify a imagePullPolicy
@@ -565,6 +564,10 @@ etcd:
       size: ""
     ## @param etcd.internal.nodeSelector node selector of the etcd
     nodeSelector: {}
+    ## @param etcd.internal.tolerations tolerations of the internal etcd
+    tolerations: []
+    # - key: node-role.kubernetes.io/master
+    #   operator: Exists
     ## @param etcd.internal.resources
     resources: {}
       # If you do want to specify resources, uncomment the following
@@ -617,13 +620,13 @@ agent:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-agent
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -695,13 +698,13 @@ schedulerEstimator:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-scheduler-estimator
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -740,7 +743,7 @@ descheduler:
   labels:
     app: karmada-descheduler
   ## @param descheduler.replicaCount target replicas of the descheduler
-  replicaCount: 2
+  replicaCount: 0
   ## @param descheduler.podAnnotations annotations of the descheduler pods
   podAnnotations: {}
   ## @param descheduler.podLabels labels of the descheduler pods
@@ -752,13 +755,13 @@ descheduler:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-descheduler
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
@@ -811,13 +814,13 @@ search:
   ## @param image.pullSecrets Specify docker-registry secret names as an array
   ##
   image:
-    registry: docker.io
+    registry: docker.m.daocloud.io
     repository: karmada/karmada-search
-    tag: latest
+    tag: v1.5.0
     ## Specify a imagePullPolicy
     ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
     ##
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## Example:
