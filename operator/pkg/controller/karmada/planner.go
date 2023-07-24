@@ -10,6 +10,7 @@ import (
 
 	operator "github.com/karmada-io/karmada/operator/pkg"
 	operatorv1alpha1 "github.com/karmada-io/karmada/operator/pkg/apis/operator/v1alpha1"
+	"github.com/karmada-io/karmada/operator/pkg/util"
 	"github.com/karmada-io/karmada/operator/pkg/workflow"
 )
 
@@ -116,7 +117,13 @@ func (p *Planner) runJobErr(err error) error {
 
 func (p *Planner) afterRunJob() error {
 	if p.action == InitAction {
+		// Update the karmada condition to Ready and set kubeconfig of karmad apiserver to karmada status.
 		operatorv1alpha1.KarmadaCompleted(p.karmada, operatorv1alpha1.Ready, "karmada init job is completed")
+		p.karmada.Status.SecretRef = &operatorv1alpha1.LocalSecretReference{
+			Namespace: p.karmada.GetNamespace(),
+			Name:      util.AdminKubeconfigSecretName(p.karmada.GetName()),
+		}
+
 		return p.Client.Status().Update(context.TODO(), p.karmada)
 	}
 
