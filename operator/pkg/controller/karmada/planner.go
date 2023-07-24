@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	utilerrors "k8s.io/apimachinery/pkg/util/errors"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -111,8 +112,13 @@ func (p *Planner) preRunJob() error {
 }
 
 func (p *Planner) runJobErr(err error) error {
+	var errs []error
+	errs = append(errs, err)
+
 	operatorv1alpha1.KarmadaFailed(p.karmada, operatorv1alpha1.Ready, err.Error())
-	return p.Client.Status().Update(context.TODO(), p.karmada)
+	errs = append(errs, p.Client.Status().Update(context.TODO(), p.karmada))
+
+	return utilerrors.NewAggregate(errs)
 }
 
 func (p *Planner) afterRunJob() error {
