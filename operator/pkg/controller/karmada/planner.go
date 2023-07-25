@@ -4,14 +4,19 @@ import (
 	"context"
 	"fmt"
 
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilerrors "k8s.io/apimachinery/pkg/util/errors"
+	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/klog/v2"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	operator "github.com/karmada-io/karmada/operator/pkg"
 	operatorv1alpha1 "github.com/karmada-io/karmada/operator/pkg/apis/operator/v1alpha1"
+	"github.com/karmada-io/karmada/operator/pkg/constants"
 	"github.com/karmada-io/karmada/operator/pkg/util"
+	"github.com/karmada-io/karmada/operator/pkg/util/apiclient"
 	"github.com/karmada-io/karmada/operator/pkg/workflow"
 )
 
@@ -33,6 +38,7 @@ type Planner struct {
 	client.Client
 	karmada *operatorv1alpha1.Karmada
 	job     *workflow.Job
+	config  *rest.Config
 }
 
 // NewPlannerFor creates planner, it will recognize the karmada resource action
@@ -68,6 +74,7 @@ func NewPlannerFor(karmada *operatorv1alpha1.Karmada, c client.Client, config *r
 		Client:  c,
 		job:     job,
 		action:  action,
+		config:  config,
 	}, nil
 }
 
@@ -125,6 +132,36 @@ func (p *Planner) afterRunJob() error {
 	if p.action == InitAction {
 		// Update the karmada condition to Ready and set kubeconfig of karmad apiserver to karmada status.
 		operatorv1alpha1.KarmadaCompleted(p.karmada, operatorv1alpha1.Ready, "karmada init job is completed")
+
+		if !util.IsInCluster(p.karmada.Spec.HostCluster) {
+			localClusterClient, err := clientset.NewForConfig(p.config)
+			if err != nil {
+				return fmt.Errorf("error when creating local cluster client, err: %w", err)
+			}
+
+			remoteClient, err := util.BuildClientFromSecretRef(localClusterClient, p.karmada.Spec.HostCluster.SecretRef)
+			if err != nil {
+				return fmt.Errorf("error when creating cluster client to install karmada, err: %w", err)
+			}
+
+			secret, err := remoteClient.CoreV1().Secrets(p.karmada.GetNamespace()).Get(context.TODO(), util.AdminKubeconfigSecretName(p.karmada.GetName()), metav1.GetOptions{})
+			if err != nil {
+				return err
+			}
+
+			err = apiclient.CreateOrUpdateSecret(localClusterClient, &corev1.Secret{
+				ObjectMeta: metav1.ObjectMeta{
+					Namespace: p.karmada.GetNamespace(),
+					Name:      util.AdminKubeconfigSecretName(p.karmada.GetName()),
+					Labels:    constants.KarmadaOperatorLabel,
+				},
+				Data: secret.Data,
+			})
+			if err != nil {
+				return fmt.Errorf("failed to create secret of kubeconfig, err: %w", err)
+			}
+		}
+
 		p.karmada.Status.SecretRef = &operatorv1alpha1.LocalSecretReference{
 			Namespace: p.karmada.GetNamespace(),
 			Name:      util.AdminKubeconfigSecretName(p.karmada.GetName()),
