@@ -1,18 +1,15 @@
 package karmada
 
 import (
-	"context"
 	"errors"
 	"fmt"
 	"net/url"
 	"sync"
 
 	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	utilversion "k8s.io/apimachinery/pkg/util/version"
 	clientset "k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
 	"k8s.io/klog/v2"
 
 	operatorv1alpha1 "github.com/karmada-io/karmada/operator/pkg/apis/operator/v1alpha1"
@@ -99,10 +96,10 @@ func newRunData(opt *InitOptions) (*initData, error) {
 	// if there is no endpoint info, we are consider that the local cluster
 	// is remote cluster to install karmada.
 	var remoteClient clientset.Interface
-	if isInCluster(opt.Karmada) {
+	if util.IsInCluster(opt.Karmada.Spec.HostCluster) {
 		remoteClient = localClusterClient
 	} else {
-		remoteClient, err = BuildClientFromSecretRef(localClusterClient, opt.Karmada.Spec.HostCluster.SecretRef)
+		remoteClient, err = util.BuildClientFromSecretRef(localClusterClient, opt.Karmada.Spec.HostCluster.SecretRef)
 		if err != nil {
 			return nil, fmt.Errorf("error when creating cluster client to install karmada, err: %w", err)
 		}
@@ -145,7 +142,8 @@ func newRunData(opt *InitOptions) (*initData, error) {
 		}
 	}
 
-	if !isInCluster(opt.Karmada) && opt.Karmada.Spec.Components.KarmadaAPIServer.ServiceType != corev1.ServiceTypeNodePort {
+	if !util.IsInCluster(opt.Karmada.Spec.HostCluster) &&
+		opt.Karmada.Spec.Components.KarmadaAPIServer.ServiceType != corev1.ServiceTypeNodePort {
 		return nil, fmt.Errorf("if karmada is installed in a remote cluster, the service of karmada-apiserver must be NodePort")
 	}
 
@@ -163,44 +161,6 @@ func newRunData(opt *InitOptions) (*initData, error) {
 		dnsDomain:           *opt.Karmada.Spec.HostCluster.Networking.DNSDomain,
 		CertStore:           certs.NewCertStore(),
 	}, nil
-}
-
-func isInCluster(karmada *operatorv1alpha1.Karmada) bool {
-	return karmada.Spec.HostCluster == nil || karmada.Spec.HostCluster.SecretRef == nil ||
-		len(karmada.Spec.HostCluster.SecretRef.Name) == 0
-}
-
-func BuildClientFromSecretRef(client *clientset.Clientset, ref *operatorv1alpha1.LocalSecretReference) (*clientset.Clientset, error) {
-	secret, err := client.CoreV1().Secrets(ref.Namespace).Get(context.TODO(), ref.Name, metav1.GetOptions{})
-	if err != nil {
-		return nil, err
-	}
-
-	kubeconfigBytes, ok := secret.Data["kubeconfig"]
-	if !ok {
-		return nil, fmt.Errorf("the kubeconfig or data key 'kubeconfig' is not found, please check the secret %s/%s", secret.Namespace, secret.Name)
-	}
-
-	return newClientSetForConfig(kubeconfigBytes)
-}
-
-func newClientSetForConfig(kubeconfig []byte) (*clientset.Clientset, error) {
-	clientConfig, err := clientcmd.NewClientConfigFromBytes(kubeconfig)
-	if err != nil {
-		return nil, err
-	}
-
-	config, err := clientConfig.ClientConfig()
-	if err != nil {
-		return nil, err
-	}
-
-	client, err := clientset.NewForConfig(config)
-	if err != nil {
-		return nil, err
-	}
-
-	return client, nil
 }
 
 func (data *initData) GetName() string {
