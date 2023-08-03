@@ -90,6 +90,8 @@ func CreateOrUpdateService(client clientset.Interface, service *corev1.Service) 
 		}
 
 		service.ResourceVersion = older.ResourceVersion
+		service.Spec.IPFamilies = older.Spec.IPFamilies
+		service.Spec.ClusterIPs = older.Spec.ClusterIPs
 		if _, err := client.CoreV1().Services(service.GetNamespace()).Update(context.TODO(), service, metav1.UpdateOptions{}); err != nil {
 			return fmt.Errorf("unable to update Service: %v", err)
 		}
